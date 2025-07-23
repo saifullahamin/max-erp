@@ -1,26 +1,137 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgba(0, 0, 0, 0.85);
+  background: #fff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+.custom-form .ant-form-item-explain-error {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  margin-top: 2px !important;
+}
+
+.custom-form .ant-form-item-explain {
+  min-height: auto !important;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 16px 12px !important;
+}
+
+.custom-table .ant-table-thead > tr > th .ant-table-column-title {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+
+.custom-table .ant-pagination {
+  font-size: 14px !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-item {
+  font-size: 14px !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-prev,
+.custom-table .ant-pagination .ant-pagination-next {
+  font-size: 14px !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-options {
+  font-size: 14px !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-options .ant-select {
+  font-size: 14px !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-total-text {
+  font-size: 14px !important;
+}
+
+/* Responsive utilities */
+.hide-on-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hide-on-mobile {
+    display: block;
+  }
+}
+
+.show-on-mobile {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .show-on-mobile {
+    display: none;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .ant-card-head-title {
+    font-size: 16px !important;
+  }
+  
+  .ant-card-extra {
+    margin-top: 8px;
+  }
+  
+  .ant-table {
+    font-size: 12px !important;
+  }
+  
+  .ant-table-thead > tr > th {
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+  }
+  
+  .ant-table-tbody > tr > td {
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+  }
+  
+  .ant-modal {
+    margin: 16px !important;
+  }
+  
+  .ant-modal-content {
+    border-radius: 8px !important;
+  }
+  
+  .ant-form-item-label > label {
+    font-size: 14px !important;
+  }
+  
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker {
+    font-size: 14px !important;
+  }
 }
