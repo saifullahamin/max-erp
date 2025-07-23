@@ -1,103 +1,221 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState } from "react";
+import {
+  Layout,
+  Card,
+  Row,
+  Typography,
+  Button,
+  Space,
+  Avatar,
+  App,
+} from "antd";
+import { PlusOutlined, UserOutlined } from "@ant-design/icons";
+import { useDesignSystem } from "./theme/ThemeProvider";
+import {
+  leaveBalances,
+  leaveRequests,
+  currentEmployee,
+  leaveTypes,
+} from "./data/mockData";
+import { LeaveRequest, LeaveRequestFormValues } from "./types/leave";
+import { format } from "date-fns";
+import LeaveBalanceCard from "./components/LeaveBalanceCard";
+import LeaveRequestForm from "./components/LeaveRequestForm";
+import LeaveRequestsTable from "./components/LeaveRequestsTable";
+
+const { Header, Content } = Layout;
+const { Title, Text } = Typography;
+
+export default function LeaveRequestPage() {
+  const theme = useDesignSystem();
+  const { notification } = App.useApp();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [requests, setRequests] = useState<LeaveRequest[]>(leaveRequests);
+
+  const handleSubmit = async (values: LeaveRequestFormValues) => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const newRequest: LeaveRequest = {
+        id: `req-${Date.now()}`,
+        employeeId: currentEmployee.id,
+        employeeName: currentEmployee.name,
+        leaveType: leaveTypes.find((lt) => lt.id === values.leaveTypeId)!,
+        startDate: format(values.dateRange[0].toDate(), "yyyy-MM-dd"),
+        endDate: format(values.dateRange[1].toDate(), "yyyy-MM-dd"),
+        duration: values.duration,
+        notes: values.notes || "",
+        status: "pending",
+        submittedAt: new Date().toISOString(),
+        approvedBy: undefined,
+        approvedAt: undefined,
+      };
+
+      setRequests([newRequest, ...requests]);
+      setIsModalVisible(false);
+
+      notification.success({
+        message: "Leave Request Submitted",
+        description:
+          "Your leave request has been submitted successfully and is pending approval.",
+        placement: "topRight",
+        duration: 4,
+        style: {
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        },
+      });
+    } catch (error) {
+      notification.error({
+        message: "Error",
+        description: "Failed to submit leave request. Please try again.",
+        placement: "topRight",
+        duration: 4,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Layout
+      style={{
+        minHeight: "100vh",
+        background: theme.colors.background.secondary,
+      }}
+    >
+      <Header
+        style={{
+          background: theme.colors.background.primary,
+          borderBottom: `1px solid ${theme.colors.border.light}`,
+          padding: `0 ${theme.spacing.md}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "auto",
+          minHeight: 64,
+          flexWrap: "wrap",
+          gap: theme.spacing.sm,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: theme.spacing.md,
+            flexWrap: "wrap",
+          }}
+        >
+          <Title
+            level={3}
+            style={{
+              margin: 0,
+              color: theme.colors.primary[500],
+              fontSize: "18px",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Max ERP - HRMS
+          </Title>
+          <Text
+            type="secondary"
+            className="hide-on-mobile"
+            style={{
+              fontSize: "12px",
+            }}
           >
-            Read our docs
-          </a>
+            Leave Management System
+          </Text>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Space size="small">
+          <Avatar size="default" icon={<UserOutlined />} />
+          <div style={{ height: "fit-content" }}>
+            <div
+              style={{
+                fontWeight: 500,
+                lineHeight: "1.2",
+                fontSize: "14px",
+              }}
+            >
+              {currentEmployee.name}
+            </div>
+            <div
+              className="hide-on-mobile"
+              style={{
+                lineHeight: "1.2",
+                fontSize: "11px",
+                color: theme.colors.text.secondary,
+              }}
+            >
+              {currentEmployee.position}
+            </div>
+          </div>
+        </Space>
+      </Header>
+
+      <Content style={{ padding: theme.spacing.md }}>
+        <div
+          style={{
+            paddingLeft: theme.spacing.md,
+            paddingRight: theme.spacing.md,
+            margin: "0 auto",
+            maxWidth: "1200px",
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <Card
+            title="Leave Balance"
+            style={{ marginBottom: theme.spacing.lg }}
+          >
+            <Row
+              gutter={[parseInt(theme.spacing.lg), parseInt(theme.spacing.lg)]}
+            >
+              {leaveBalances.map((balance, index) => (
+                <LeaveBalanceCard
+                  key={balance.id}
+                  balance={balance}
+                  index={index}
+                />
+              ))}
+            </Row>
+          </Card>
+
+          <Card
+            title="Leave Requests"
+            extra={
+              <Button
+                type="primary"
+                size="middle"
+                style={{
+                  borderRadius: "8px",
+                  padding: "4px 8px",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  border: "none",
+                }}
+                icon={<PlusOutlined />}
+                onClick={() => setIsModalVisible(true)}
+              >
+                <span className="hide-on-mobile">New Request</span>
+                <span className="show-on-mobile">New</span>
+              </Button>
+            }
+          >
+            <LeaveRequestsTable requests={requests} theme={theme} />
+          </Card>
+        </div>
+
+        <LeaveRequestForm
+          isVisible={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          onSubmit={handleSubmit}
+          loading={loading}
+          leaveTypes={leaveTypes}
+        />
+      </Content>
+    </Layout>
   );
 }
